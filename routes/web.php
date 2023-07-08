@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\registerController;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +14,9 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
+Route::controller(registerController::class)->group(function () {
+    Route::get('/', 'index')->name('login');
+    Route::get('/register', 'register')->name('register');
+    Route::post('/register', 'registerAksi')->name('register.Aksi');
+    Route::get('/otp/{nomer}', 'verifyOTP')->name('verifyOTP');
 });
