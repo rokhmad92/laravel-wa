@@ -15,22 +15,39 @@ class userRepository implements userRepositoryInterface
 
     public function storeUser($request)
     {
-        $user = new User;
-        $user->username = $request->username;
-        $user->email = $request->email;
-        $user->nomer = $request->nomer;
-        $user->password = encrypt($request->password);
-        $user->otp = rand(1000, 9999);
+        // $user = new User;
+        // $user->username = $request->username;
+        // $user->email = $request->email;
+        // $user->nomer = $request->nomer;
+        // $user->password = encrypt($request->password);
+        // $user->otp = rand(1000, 9999);
+        // $user->save();
+
+        $user = User::create([
+            'email' => $request->email,
+            'username' => $request->username,
+            'nomer' => $request->nomer,
+            'password' => bcrypt($request->password),
+            'otp' => rand(1000, 9999)
+        ]);
         return $user;
     }
 
-    public function resendOtp($user)
+    public function updateUserOTP($nomer)
+    {
+        $user = User::where('nomer', $nomer)->update([
+            'otp' => rand(1000, 9999)
+        ]);
+        return $user;
+    }
+
+    public function sendOtp($user)
     {
         // send otp (WA)
         $curl = curl_init();
         $token = "bpnkFJP1mZZ+cegP7mNE";
         $url = "https://api.fonnte.com/send";
-        $pesan = 'OTP :' . $user->otp;
+        $pesan = 'OTP : ' . $user->otp;
         curl_setopt_array($curl, [
             CURLOPT_URL => $url,
             CURLOPT_RETURNTRANSFER => true,
@@ -50,6 +67,14 @@ class userRepository implements userRepositoryInterface
         ]);
         curl_exec($curl);
         curl_close($curl);
+    }
+
+    public function verifyOTP($user)
+    {
+        $aksi = User::where('id', $user->id)->update([
+            'otp_verify' => true
+        ]);
+        return $aksi;
     }
 
     // public function findUser($id)

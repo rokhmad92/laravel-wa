@@ -7,6 +7,9 @@
     <title>laravel wa + zoom</title>
 </head>
 <body>
+    @if (session()->has('success'))
+        <strong style="color: red;">{{ session('success') }}</strong>
+    @endif
     <form action="" method="POST">
         @csrf
         <lable for="username">username :</label>

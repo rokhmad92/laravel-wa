@@ -28,6 +28,9 @@ class RouteServiceProvider extends ServiceProvider
             return Limit::perMinute(60)->by($request->user()?->id ?: $request->ip());
         });
 
+        // rate limit untuk resend otp
+        $this->rateLimitOTP();
+
         $this->routes(function () {
             Route::middleware('api')
                 ->prefix('api')
@@ -35,6 +38,20 @@ class RouteServiceProvider extends ServiceProvider
 
             Route::middleware('web')
                 ->group(base_path('routes/web.php'));
+        });
+    }
+
+    protected function rateLimitOTP()
+    {
+        RateLimiter::for('otp', function (Request $request) {
+            $key = 'otp.'.$request->ip();
+            $max = 2;
+            $decay = 60; // detik = 1 menit/60 detik
+            if(RateLimiter::tooManyAttempts($key, $max)){
+                return back()->with('error', 'Terlalu Banyak Request');
+            } else {
+                RateLimiter::hit($key, $decay);
+            }
         });
     }
 }

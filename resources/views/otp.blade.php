@@ -7,14 +7,21 @@
     <title>OTP Verify</title>
 </head>
 <body>
-    <form action="" method="POST">
+    @if (session()->has('error'))
+        <strong style="color: red;">{{ session('error') }}</strong>
+    @endif
+    <form method="POST">
+        @csrf
         <lable for="token">Token OTP :</label>
         <input type="text" name="token" id="token">
         <button type="submit">Verify</button>
 
         <br><br><br>
 
-        <button><a href="">Kirim Ulang Token</a></button>
+        <a href="/otp/verify/{{ $nomer }}">Kirim Ulang Token</a>
+        @if ($retries <= 0)
+            <label>Please try again after {{ $seconds }} seconds.</label>
+        @endif
     </form>
 </body>
 </html>

@@ -2,6 +2,7 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\registerController;
+use App\Http\Controllers\zoomController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,7 +17,15 @@ use App\Http\Controllers\registerController;
 
 Route::controller(registerController::class)->group(function () {
     Route::get('/', 'index')->name('login');
+    Route::post('/', 'login');
     Route::get('/register', 'register')->name('register');
     Route::post('/register', 'registerAksi')->name('register.Aksi');
     Route::get('/otp/{nomer}', 'verifyOTP')->name('verifyOTP');
+    Route::post('/otp/{nomer}', 'verifyOTPAksi');
+    // resend
+    Route::get('/otp/verify/{nomer}', 'resendOTP')->middleware('throttle:otp');
+});
+
+Route::controller(zoomController::class)->group(function () {
+    Route::get('zoom', 'index');
 });
